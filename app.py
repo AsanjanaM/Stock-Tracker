@@ -42,7 +42,7 @@ prediction_dates_ord = prediction_dates.to_series().apply(lambda x: x.toordinal(
 predictions = model.predict(prediction_dates_ord.values.reshape(-1, 1))
 
 # Display the actual stock prices
-st.subheader("Actual Stock Prices:")
+st.subheader("Today's Stock Prices:")
 st.line_chart(stock_data['Close'])
 
 # Display the predicted stock prices
@@ -51,9 +51,9 @@ predicted_data = pd.DataFrame({'Date': prediction_dates, 'Close': predictions})
 st.line_chart(predicted_data.set_index('Date'))
 
 # Display the actual and predicted stock prices together
-st.subheader("Actual vs. Predicted Stock Prices:")
+st.subheader("Today's vs. Predicted Stock Prices:")
 combined_data = pd.concat([stock_data['Close'], predicted_data.set_index('Date')['Close']], axis=1)
-combined_data.columns = ['Actual', 'Predicted']
+combined_data.columns = ['Todays', 'Predicted']
 st.line_chart(combined_data)
 
 # Add the 'Open' column to the stock_data DataFrame
@@ -75,10 +75,10 @@ st.write(current_price)
 
 
 # Display the stock price tracker
-st.subheader("Stock Price Tracker:")
-tracker_data = pd.concat([stock_data['Close'], predicted_data.set_index('Date')['Close']], axis=1)
-tracker_data.columns = ['Actual', 'Predicted']
-st.line_chart(tracker_data)
+#st.subheader("Stock Price Tracker:")
+#tracker_data = pd.concat([stock_data['Close'], predicted_data.set_index('Date')['Close']], axis=1)
+#tracker_data.columns = ['Actual', 'Predicted']
+#st.line_chart(tracker_data)
 
 # Display the open and close values
 st.subheader("Open and Close Values:")
