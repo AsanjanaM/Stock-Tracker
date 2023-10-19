@@ -7,7 +7,7 @@ import yfinance as yf
 from datetime import date  
 
 # Set the page title
-st.title("Stock Price Prediction App")
+st.title("Stock Price Prediction ")
 
 # Get user input for the stock symbol
 option = st.sidebar.selectbox('Select one symbol', ('AAPL', 'MSFT', 'SPY', 'WMT', 'GME', 'MU', 'NFLX', 'BNOX','TSLA','LRCX'))
