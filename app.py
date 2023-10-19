@@ -58,7 +58,7 @@ prediction_dates = prediction_dates[1:]  # Exclude the last date from the range
 prediction_dates_ord = prediction_dates.to_series().apply(lambda x: x.toordinal())
 predictions = model.predict(prediction_dates_ord.values.reshape(-1, 1))
 
-# Display the actual stock prices
+# Display the todays stock prices
 st.subheader("Today's Stock Prices:")
 st.line_chart(stock_data['Close'])
 
@@ -67,10 +67,10 @@ st.subheader("Predicted Stock Prices:")
 predicted_data = pd.DataFrame({'Date': prediction_dates, 'Close': predictions})
 st.line_chart(predicted_data.set_index('Date'))
 
-# Display the actual and predicted stock prices together
+# Display the todays and predicted stock prices together
 st.subheader("Today's vs. Predicted Stock Prices:")
 combined_data = pd.concat([stock_data['Close'], predicted_data.set_index('Date')['Close']], axis=1)
-combined_data.columns = ['Today', 'Predicted']
+combined_data.columns = ['Todays', 'Predicted']
 st.line_chart(combined_data)
 
 # Add the 'Open' column to the stock_data DataFrame
