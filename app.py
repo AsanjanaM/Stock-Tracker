@@ -29,9 +29,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Original selectbox and date input code
-#option = st.sidebar.selectbox('Select one symbol', ('AAPL', 'MSFT', 'SPY', 'WMT', 'GME', 'MU', 'NFLX', 'BNOX'), format_func=lambda x: f'<span style="color: #32CD32; font-family:"Segoe Print">{x}</span>')
-
 option = st.sidebar.selectbox('Select one symbol', ('AAPL', 'MSFT', 'SPY', 'WMT', 'GME', 'MU', 'NFLX', 'BNOX'))
 start_date = st.sidebar.date_input('Start date')
 end_date = st.sidebar.date_input('End date')
@@ -71,7 +68,7 @@ ax.plot(stock_data.index, stock_data['Close'], label='Close Price', color='#FFA0
 ax.plot(stock_data.index, stock_data['Open'], label='Open Price', color='#FFDAB9', marker='o')
 
 # Plot the previous close price
-ax.plot(stock_data.index, previous_close, label='Previous Close', color='#98FB98', marker='o')
+ax.plot(stock_data.index, previous_close, label='todays price', color='#98FB98', marker='o')
 
 # Add labels and title
 ax.set_xlabel('Date')
@@ -98,53 +95,67 @@ st.markdown(f'<span style="color: #DEB887;">Today\'s Price: ${current_price:.2f}
 
 
 #coding for the 2nd graph open and close 
-fig, ax = plt.subplots(figsize=(12, 6))
-# Plot the close price
-ax.plot(stock_data.index, stock_data['Close'], label='Close Price', color='#8B008B', marker='o')
-# Plot the open price
-ax.plot(stock_data.index, stock_data['Open'], label='Open Price', color='#FF00FF', marker='o')
-# Add labels and title
-ax.set_xlabel('Date')
-ax.set_ylabel('Price (USD)')
-ax.set_title(f'Open and Close Price Comparison for {option}')
-ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=1))
-ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
-# Display legend
-plt.legend()
-# Display the graph
-st.pyplot(fig)
-stock_data = yf.Ticker(option).history(period="1d")
+# Fetch the stock data using yfinance
+stock_data = yf.download(option, start=start_date, end=end_date)
+
+# Check if there is data in the DataFrame
 if not stock_data.empty:
-        # Original open, close, and previous close values
-        open_price = stock_data['Open'].iloc[-1]
-        close_price = stock_data['Close'].iloc[-1]
+    # Create a figure and plot the data
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    # Plot the close price
+    ax.plot(stock_data.index, stock_data['Close'], label='Close Price', color='blue', marker='o')
+
+    # Plot the open price
+    ax.plot(stock_data.index, stock_data['Open'], label='Open Price', color='green', marker='o')
+
+    # Add labels and title
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Price (USD)')
+    ax.set_title(f'Open and Close Price Comparison for {option}')
+    ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=1))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+
+    # Display legend
+    plt.legend()
+
+    # Display the graph
+    st.pyplot(fig)
 st.markdown(f'<span style="color: #DEB887; font-size: 16px;"><b>Open Price:</b> ${open_price:.2f}</span>', unsafe_allow_html=True)
 st.markdown(f'<span style="color: #F4A460; font-size: 16px;"><b>Close Price:</b> ${close_price:.2f}</span>', unsafe_allow_html=True)
 
 
 
  #coding for the 3rd graph for actual price 
+# Create a figure and plot the actual price graph
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# Plot the actual price with a specific color (e.g., green)
+ax.plot(stock_data.index, stock_data['Close'], label='Actual Price', color='#DAA520', marker='o')
+
 # Add labels and title
 ax.set_xlabel('Date')
 ax.set_ylabel('Price (USD)')
 ax.set_title(f'Actual Price Comparison for {option}')
 ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=1))
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%m-%d"))
+
 # Display legend
 plt.legend()
+
 # Display the graph
 st.pyplot(fig)
-# Calculate the actual price
+
+# Assuming you have the actual price in a variable named actual_price
 actual_price = stock_data['Close'].iloc[-1]
+
 # Define a color for the text (e.g., green)
-text_color = '#00FFFF'
+text_color = '#DAA520'
 # Display the actual price with color
 st.markdown(f'<span style="color: {text_color};">Actual Price: ${actual_price:.2f}</span>', unsafe_allow_html=True)
 
 
-
-
-
+#graph to display predicit value 
 # Fetch the stock data using yfinance
 stock_data = yf.download(option, start='2010-01-01', end='2023-10-06')
 
@@ -182,6 +193,7 @@ st.line_chart(combined_data)
 # Add the 'Open' column to the stock_data DataFrame
 stock_data['Open'] = stock_data['Open']
 
+ # displayes the currect ,open ,close,previous value 
 # Fetch the current stock price using yfinance
 current_price = yf.Ticker(option).history(period='1d')['Close'].iloc[-1]
 
@@ -240,5 +252,8 @@ else:
 
 # Display the prediction message with curved edges and gaps
 st.markdown(f"<div style='{box_style} background-color: #white;'><b>{prediction_message}</b></div>", unsafe_allow_html=True)
+
+  
+
 
 
