@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 import yfinance as yf
 
 # Set the page title
-st.title("Stock Price Comparison App")
+st.title("STOCK PRICE PREDICITION")
 
 # Get user input for the stock symbol and date range
 option = st.sidebar.selectbox('Select one symbol', ('AAPL', 'MSFT', 'SPY', 'WMT', 'GME', 'MU', 'NFLX', 'BNOX'))
@@ -164,31 +164,48 @@ close_price = stock_data['Close'].iloc[-1]
 # Fetch the current stock price using yfinance
 current_price = yf.Ticker(option).history(period='1d')['Close'].iloc[0]
 
-# Display the open, close, and previous close values
-st.subheader("stock price comparision")
-open_close_previous_data = stock_data[['Open', 'Close']]
-previous_close = stock_data['Close'].iloc[-1]
-st.write(f"Open: {stock_data['Open'].iloc[-1]:.2f}")
-st.write(f"Close: {stock_data['Close'].iloc[-1]:.2f}")
-st.write(f"Today's Price: {current_price:.2f}")
-st.write(f"Predicted Price: {predictions[-1]:.2f}")
-
 # Determine if the price went up, down, or stayed the same
+price_change_message = ""
+price_change_color = "da70d6"  # Default color for unchanged price
+
 if current_price > previous_close:
-    st.markdown(f"Price Up! Current Price: {current_price} (Previous Close: {previous_close})")
+    price_change_message = f"Price Up! Current Price: {current_price} (Previous Close: {previous_close})"
+    price_change_color = "green"
 elif current_price < previous_close:
-    st.markdown(f"Price Down! Current Price: {current_price} (Previous Close: {previous_close})")
+    price_change_message = f"Price Down! Current Price: {current_price} (Previous Close: {previous_close})"
+    price_change_color = "red"
 else:
-    st.markdown(f"Price Unchanged! Current Price: {current_price} (Previous Close: {previous_close})")
+    price_change_message = f"Price Unchanged! Current Price: {current_price} (Previous Close: {previous_close})"
+
+# Define the style for the boxes
+box_style = "border-radius: 15px; padding: 10px; margin: 10px;"
+
+# Display the open, close, and previous close values with curved edges and gaps
+#st.subheader("Stock Price Comparison")
+
+def create_colored_box(label, value, bg_color):
+    style = f"{box_style} background-color: {bg_color};"
+    return f"<div style='{style}'><b>{label}:</b> ${value:.2f}</div>"
+
+st.markdown(create_colored_box("Open Price", open_price, "#d8f5g7h"), unsafe_allow_html=True)
+st.markdown(create_colored_box("Close Price", close_price, "#h7d6f4"), unsafe_allow_html=True)
+st.markdown(create_colored_box("Today's Price", current_price, price_change_color), unsafe_allow_html=True)
+st.markdown(create_colored_box("Predicted Price", predictions[-1], "#j8c0s3"), unsafe_allow_html=True)
+
+# Display the price change message with the appropriate color and style
+style = f"{box_style} background-color: {price_change_color};"
+st.markdown(f"<div style='{style}'><b>{price_change_message}</b></div>", unsafe_allow_html=True)
 
 # Determine if the predicted price is higher, lower, or the same as today's price
+prediction_message = ""
 if predictions[-1] > current_price:
-    st.markdown(f"Predicted Price is Higher by ${predictions[-1] - current_price:.2f} compared to Today's Price")
+    prediction_message = f"Predicted Price is Higher by ${predictions[-1] - current_price:.2f} compared to Today's Price"
 elif predictions[-1] < current_price:
-    st.markdown(f"Predicted Price is Lower by ${current_price - predictions[-1]:.2f} compared to Today's Price")
+    prediction_message = f"Predicted Price is Lower by ${current_price - predictions[-1]:.2f} compared to Today's Price"
 else:
-    st.markdown("Predicted Price is the Same as Today's Price")
+    prediction_message = "Predicted Price is the Same as Today's Price"
 
-
+# Display the prediction message with curved edges and gaps
+st.markdown(f"<div style='{box_style} background-color: #white;'><b>{prediction_message}</b></div>", unsafe_allow_html=True)
 
 
