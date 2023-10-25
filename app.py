@@ -164,4 +164,3 @@ if st.button("Submit"):
         st.markdown(create_colored_box("Predicted Price", predictions[-1], "#696969"), unsafe_allow_html=True)
         st.markdown(create_colored_box("Today's Price", current_price, "#A9A9A9"), unsafe_allow_html=True)
 
-
